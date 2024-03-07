@@ -1,7 +1,3 @@
-export default function createProject(title) {
-  return {
-    id: Date.now().toString(),
-    title: title,
-    todos: []
-  }
+export default function Project(title) {
+  this.title = title
 }
