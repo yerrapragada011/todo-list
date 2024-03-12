@@ -2,9 +2,10 @@ import Project from './Project.js'
 import Todo from './Todo.js'
 
 const addProject = document.getElementById('addProject')
-const addProjectForm = document.getElementById('addProjectForm')
 const projectContainer = document.getElementById('projects')
-const todoForm = document.getElementById('todoForm')
+const todoContainer = document.getElementById('todos')
+const projectTitle = document.getElementById('project-title')
+const todoTemplate = document.getElementById('todo-template')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -13,6 +14,36 @@ let selectedProjectId = localStorage.getItem(SELECTED_PROJECT_ID_KEY)
 
 function render() {
   clearElement(projectContainer)
+  renderProjects()
+
+  const selectedProject = projects.find(
+    (project) => project.id === selectedProjectId
+  )
+
+  if (selectedProjectId == null) {
+    todoContainer.style.display = 'none'
+  } else {
+    todoContainer.style.display = ''
+    projectTitle.innerHTML = selectedProject.title
+    clearElement(todoContainer)
+    renderTodos(selectedProject)
+  }
+}
+
+function renderTodos(selectedProject) {
+  selectedProject.todos.forEach((todo) => {
+    const todoElement = document.importNode(todoTemplate.content, true)
+    const checkbox = todoElement.getElementById('complete-todo')
+    checkbox.id = todo.id
+    checkbox.checked = todo.complete
+    const label = todoElement.getElementById('todo-title-label')
+    label.htmlFor = todo.id
+    label.append(todo.title)
+    todoContainer.appendChild(todoElement)
+  })
+}
+
+function renderProjects() {
   projects.forEach((project, index) => {
     let projectElement = document.createElement('li')
     projectElement.dataset.projectId = project.id
@@ -59,7 +90,7 @@ projectContainer.addEventListener('click', (e) => {
   }
 })
 
-addProjectForm.addEventListener('change', (e) => {
+addProject.addEventListener('change', (e) => {
   e.preventDefault()
   let title = e.target.value
   if (title == null || title === '') return

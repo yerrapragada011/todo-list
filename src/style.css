@@ -23,3 +23,9 @@ body {
   font-weight: 900;
   color: red;
 }
+
+#todo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

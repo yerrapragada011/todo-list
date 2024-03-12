@@ -8,12 +8,39 @@
     <title>Todo List</title>
   </head>
   <body>
-    <form action="" id="addProjectForm">
-      <input type="text" id="addProject" />
-    </form>
+    <input type="text" id="addProject" placeholder="Add project" />
     <h2>Projects</h2>
     <div id="projects"></div>
     <h2>Todos</h2>
-    <div id="todoForm"></div>
+    <h3 id="project-title"></h3>
+    <div id="todos"></div>
+    <template id="todo-template">
+      <form action="" id="todo-form">
+        <label for="todo-title" id="todo-title-label"></label>
+        <input type="text" id="todo-title" placeholder="Title" />
+        <input type="text" id="todo-description" placeholder="Description" />
+        <input type="date" id="todo-dueDate" placeholder="Due Date" />
+        <div id="priority">
+          <p>Priority</p>
+          <label for="priority-low">Low</label>
+          <input type="radio" id="priority-low" value="low" />
+          <label for="priority-med">Med</label>
+          <input type="radio" id="priority-med" value="med" />
+          <label for="priority-high">High</label>
+          <input type="radio" id="priority-high" value="high" />
+        </div>
+        <textarea
+          name="notes"
+          id="notes"
+          cols="30"
+          rows="5"
+          placeholder="Add note..."
+        ></textarea>
+        <div id="complete">
+          <label for="complete-todo" id="complete-todo-label">Complete:</label>
+          <input type="checkbox" id="complete-todo" />
+        </div>
+      </form>
+    </template>
   </body>
 </html>
