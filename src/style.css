@@ -18,3 +18,8 @@ body {
 #addProject {
   width: 25%;
 }
+.active-project {
+  font-size: 25px;
+  font-weight: 900;
+  color: red;
+}
