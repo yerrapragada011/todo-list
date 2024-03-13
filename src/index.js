@@ -7,6 +7,7 @@ const todoContainer = document.getElementById('todos')
 const projectTitle = document.getElementById('project-title')
 const todoTemplate = document.getElementById('todo-template')
 const newTodoContainer = document.getElementById('todo-input')
+const newTodoInput = document.createElement('input')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -34,7 +35,6 @@ function renderTodos(selectedProject) {
   let todoInputField = newTodoContainer.querySelector('input')
   if (todoInputField) {
   } else {
-    const newTodoInput = document.createElement('input')
     newTodoInput.classList.add('addTodo')
     newTodoInput.placeholder = 'Add todo'
     newTodoContainer.appendChild(newTodoInput)
@@ -97,6 +97,9 @@ projectContainer.addEventListener('click', (e) => {
   if (e.target.tagName.toLowerCase() === 'li') {
     newTodoContainer.style.display = ''
     selectedProjectId = e.target.dataset.projectId
+    if (selectedProjectId) {
+      todoContainer.style.display = ''
+    }
     saveAndRender()
   } else {
     newTodoContainer.style.display = 'none'
@@ -113,7 +116,7 @@ addProject.addEventListener('change', (e) => {
   saveAndRender()
 })
 
-newTodoContainer.addEventListener('change', (e) => {
+newTodoInput.addEventListener('change', (e) => {
   e.preventDefault()
   let title = e.target.value
   if (title == null || title === '') return
@@ -123,7 +126,6 @@ newTodoContainer.addEventListener('change', (e) => {
     (project) => project.id === selectedProjectId
   )
   selectedProject.todos.push(newTodo)
-  renderTodos(selectedProject)
   saveAndRender()
 })
 
