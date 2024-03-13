@@ -6,6 +6,7 @@ const projectContainer = document.getElementById('projects')
 const todoContainer = document.getElementById('todos')
 const projectTitle = document.getElementById('project-title')
 const todoTemplate = document.getElementById('todo-template')
+const newTodoContainer = document.getElementById('todo-input')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -23,20 +24,27 @@ function render() {
   if (selectedProjectId == null) {
     todoContainer.style.display = 'none'
   } else {
-    todoContainer.style.display = ''
-    projectTitle.innerHTML = selectedProject.title
     clearElement(todoContainer)
     renderTodos(selectedProject)
   }
 }
 
 function renderTodos(selectedProject) {
+  projectTitle.innerHTML = selectedProject.title
+  let todoInputField = newTodoContainer.querySelector('input')
+  if (todoInputField) {
+  } else {
+    const newTodoInput = document.createElement('input')
+    newTodoInput.classList.add('addTodo')
+    newTodoInput.placeholder = 'Add todo'
+    newTodoContainer.appendChild(newTodoInput)
+  }
   selectedProject.todos.forEach((todo) => {
     const todoElement = document.importNode(todoTemplate.content, true)
     const checkbox = todoElement.getElementById('complete-todo')
+    const label = todoElement.getElementById('complete-todo-label')
     checkbox.id = todo.id
     checkbox.checked = todo.complete
-    const label = todoElement.getElementById('todo-title-label')
     label.htmlFor = todo.id
     label.append(todo.title)
     todoContainer.appendChild(todoElement)
@@ -63,6 +71,8 @@ function renderProjects() {
 }
 
 function deleteProject(index) {
+  projectTitle.innerHTML = ''
+  selectedProjectId = null
   projects.splice(index, 1)
   saveAndRender()
 }
@@ -85,8 +95,11 @@ function save() {
 
 projectContainer.addEventListener('click', (e) => {
   if (e.target.tagName.toLowerCase() === 'li') {
+    newTodoContainer.style.display = ''
     selectedProjectId = e.target.dataset.projectId
     saveAndRender()
+  } else {
+    newTodoContainer.style.display = 'none'
   }
 })
 
@@ -97,6 +110,20 @@ addProject.addEventListener('change', (e) => {
   const newProject = new Project(title)
   projects.push(newProject)
   e.target.value = null
+  saveAndRender()
+})
+
+newTodoContainer.addEventListener('change', (e) => {
+  e.preventDefault()
+  let title = e.target.value
+  if (title == null || title === '') return
+  const newTodo = new Todo(title)
+  e.target.value = null
+  const selectedProject = projects.find(
+    (project) => project.id === selectedProjectId
+  )
+  selectedProject.todos.push(newTodo)
+  renderTodos(selectedProject)
   saveAndRender()
 })
 

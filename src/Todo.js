@@ -1,16 +1,4 @@
-export default function Todo(
-  title,
-  description,
-  dueDate,
-  priority,
-  notes,
-  complete = false
-) {
-  this.id = Date.now().toString()
+export default function Todo(title, complete = false) {
   this.title = title
-  this.description = description
-  this.dueDate = dueDate
-  this.priority = priority
-  this.notes = notes
   this.complete = complete
 }

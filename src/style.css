@@ -23,9 +23,14 @@ body {
   font-weight: 900;
   color: red;
 }
-
-#todo-form {
+#project-title {
+  font-size: 25px;
+  font-weight: 900;
+  color: red;
+}
+#addTodo {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 25%;
 }
