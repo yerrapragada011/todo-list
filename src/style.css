@@ -32,3 +32,11 @@ body {
   gap: 10px;
   width: 25%;
 }
+#todo-input {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+#todos {
+  padding-top: 10px;
+}

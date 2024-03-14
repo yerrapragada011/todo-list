@@ -8,6 +8,7 @@ const projectTitle = document.getElementById('project-title')
 const todoTemplate = document.getElementById('todo-template')
 const newTodoContainer = document.getElementById('todo-input')
 const newTodoInput = document.createElement('input')
+const clearCompletedTodos = document.createElement('button')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -33,12 +34,16 @@ function render() {
 function renderTodos(selectedProject) {
   projectTitle.innerHTML = selectedProject.title
   let todoInputField = newTodoContainer.querySelector('input')
-  if (todoInputField) {
-  } else {
+  if (todoInputField == null) {
     newTodoInput.classList.add('addTodo')
     newTodoInput.placeholder = 'Add todo'
+    clearCompletedTodos.textContent = 'Clear completed'
     newTodoContainer.appendChild(newTodoInput)
+    newTodoContainer.appendChild(clearCompletedTodos)
   }
+
+  clearElement(todoContainer)
+
   selectedProject.todos.forEach((todo) => {
     const todoElement = document.importNode(todoTemplate.content, true)
     const checkbox = todoElement.getElementById('complete-todo')
@@ -91,6 +96,12 @@ function saveAndRender() {
 function save() {
   localStorage.setItem(PROJECT_KEY, JSON.stringify(projects))
   localStorage.setItem(SELECTED_PROJECT_ID_KEY, selectedProjectId)
+
+  projects.forEach((project) => {
+    project.todos.forEach((todo) => {
+      localStorage.setItem(`${todo.id}-complete`, todo.complete)
+    })
+  })
 }
 
 projectContainer.addEventListener('click', (e) => {
@@ -104,6 +115,27 @@ projectContainer.addEventListener('click', (e) => {
   } else {
     newTodoContainer.style.display = 'none'
   }
+})
+
+todoContainer.addEventListener('click', (e) => {
+  if (e.target.tagName.toLowerCase() === 'input') {
+    const selectedProject = projects.find(
+      (project) => project.id === selectedProjectId
+    )
+    const selectedTodo = selectedProject.todos.find(
+      (todo) => todo.id === e.target.id
+    )
+    selectedTodo.complete = e.target.checked
+    save()
+  }
+})
+
+clearCompletedTodos.addEventListener('click', (e) => {
+  const selectedProject = projects.find(
+    (project) => (project.id = selectedProjectId)
+  )
+  selectedProject.todos = selectedProject.todos.filter((todo) => !todo.complete)
+  saveAndRender()
 })
 
 addProject.addEventListener('change', (e) => {
