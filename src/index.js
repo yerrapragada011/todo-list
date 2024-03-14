@@ -47,18 +47,86 @@ function renderTodos(selectedProject) {
   selectedProject.todos.forEach((todo) => {
     const todoElement = document.importNode(todoTemplate.content, true)
     const checkbox = todoElement.getElementById('complete-todo')
-    const label = todoElement.getElementById('complete-todo-label')
+    const label = todoElement.getElementById('todo-label')
     checkbox.id = todo.id
     checkbox.checked = todo.complete
-    label.htmlFor = todo.id
     label.append(todo.title)
     todoContainer.appendChild(todoElement)
+    const todoInfo = document.createElement('div')
+    label.addEventListener('click', () => {
+      if (!todoInfo) {
+        renderTodoInfo(todo, todoInfo)
+      }
+    })
+    if (!todo.description && !todo.dueDate) {
+      renderTodoInfo(todo, todoInfo)
+    } else {
+      const paragraph = document.createElement('p')
+      paragraph.textContent = `Description: ${todo.description}, Due Date: ${todo.dueDate}`
+      todoInfo.appendChild(paragraph)
+    }
+    todoContainer.appendChild(todoInfo)
   })
+}
+
+function renderTodoInfo(todo, todoInfo) {
+  clearElement(todoInfo)
+
+  const descriptionInput = document.createElement('input')
+  descriptionInput.type = 'text'
+  descriptionInput.placeholder = 'Description'
+
+  const dueDateInput = document.createElement('input')
+  dueDateInput.type = 'date'
+
+  const submitButton = document.createElement('button')
+  submitButton.setAttribute('type', 'button')
+  submitButton.textContent = 'Submit'
+  submitButton.addEventListener('click', () => {
+    const description = descriptionInput.value
+    const dueDate = dueDateInput.value
+
+    // Update Todo object with new description and dueDate
+    todo.description = description
+    todo.dueDate = dueDate
+
+    // Hide inputs
+    descriptionInput.style.display = 'none'
+    dueDateInput.style.display = 'none'
+    submitButton.style.display = 'none'
+
+    // Display paragraph with description and due date
+    const paragraph = document.createElement('p')
+    paragraph.textContent = `Description: ${description}, Due Date: ${dueDate}`
+    todoInfo.appendChild(paragraph)
+
+    // Display edit button
+    const editButton = document.createElement('button')
+    editButton.setAttribute('type', 'button')
+    editButton.textContent = 'Edit'
+    editButton.addEventListener('click', () => {
+      descriptionInput.style.display =
+        descriptionInput.style.display === 'none' ? '' : 'none'
+      dueDateInput.style.display =
+        dueDateInput.style.display === 'none' ? '' : 'none'
+      submitButton.style.display =
+        submitButton.style.display === 'none' ? '' : 'none'
+      paragraph.style.display =
+        paragraph.style.display === 'none' ? 'block' : 'none'
+      editButton.style.display = 'none'
+    })
+    todoInfo.appendChild(editButton)
+  })
+
+  todoInfo.appendChild(descriptionInput)
+  todoInfo.appendChild(dueDateInput)
+  todoInfo.appendChild(submitButton)
 }
 
 function renderProjects() {
   projects.forEach((project, index) => {
-    let projectElement = document.createElement('li')
+    let projectElement = document.createElement('button')
+    projectElement.setAttribute('type', 'button')
     projectElement.dataset.projectId = project.id
     projectElement.classList.add('list')
     projectElement.textContent = project.title
@@ -99,7 +167,7 @@ function save() {
 }
 
 projectContainer.addEventListener('click', (e) => {
-  if (e.target.tagName.toLowerCase() === 'li') {
+  if (e.target.tagName.toLowerCase() === 'button') {
     newTodoContainer.style.display = ''
     selectedProjectId = e.target.dataset.projectId
     if (selectedProjectId) {
@@ -126,7 +194,7 @@ todoContainer.addEventListener('click', (e) => {
 
 clearCompletedTodos.addEventListener('click', (e) => {
   const selectedProject = projects.find(
-    (project) => (project.id === selectedProjectId)
+    (project) => project.id === selectedProjectId
   )
   selectedProject.todos = selectedProject.todos.filter((todo) => !todo.complete)
   saveAndRender()
