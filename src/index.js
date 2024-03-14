@@ -96,12 +96,6 @@ function saveAndRender() {
 function save() {
   localStorage.setItem(PROJECT_KEY, JSON.stringify(projects))
   localStorage.setItem(SELECTED_PROJECT_ID_KEY, selectedProjectId)
-
-  projects.forEach((project) => {
-    project.todos.forEach((todo) => {
-      localStorage.setItem(`${todo.id}-complete`, todo.complete)
-    })
-  })
 }
 
 projectContainer.addEventListener('click', (e) => {
@@ -132,7 +126,7 @@ todoContainer.addEventListener('click', (e) => {
 
 clearCompletedTodos.addEventListener('click', (e) => {
   const selectedProject = projects.find(
-    (project) => (project.id = selectedProjectId)
+    (project) => (project.id === selectedProjectId)
   )
   selectedProject.todos = selectedProject.todos.filter((todo) => !todo.complete)
   saveAndRender()
