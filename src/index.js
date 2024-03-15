@@ -4,7 +4,6 @@ import Todo from './Todo.js'
 const addProject = document.getElementById('addProject')
 const projectContainer = document.getElementById('projects')
 const todoContainer = document.getElementById('todos')
-const projectTitle = document.getElementById('project-title')
 const todoTemplate = document.getElementById('todo-template')
 const newTodoContainer = document.getElementById('todo-input')
 const newTodoInput = document.createElement('input')
@@ -12,7 +11,12 @@ const clearCompletedTodos = document.createElement('button')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
+const DEFAULT_PROJECT_TITLE = 'Project 1'
 let projects = JSON.parse(localStorage.getItem(PROJECT_KEY)) || []
+if (projects.length === 0) {
+  const defaultProject = new Project(DEFAULT_PROJECT_TITLE)
+  projects.push(defaultProject)
+}
 let selectedProjectId = localStorage.getItem(SELECTED_PROJECT_ID_KEY)
 
 function render() {
@@ -33,7 +37,6 @@ function render() {
 }
 
 function renderTodos(selectedProject) {
-  projectTitle.innerHTML = selectedProject.title
   let todoInputField = newTodoContainer.querySelector('input')
   if (todoInputField == null) {
     newTodoInput.classList.add('addTodo')
@@ -166,7 +169,7 @@ function editTodo(todo) {
   })
 }
 
-function deleteTodoItem(todoId) {
+function deleteTodo(todoId) {
   const selectedProjectIndex = projects.findIndex(
     (project) => project.id === selectedProjectId
   )
@@ -198,7 +201,6 @@ function renderProjects() {
 }
 
 function deleteProject(index) {
-  projectTitle.innerHTML = ''
   selectedProjectId = null
   projects.splice(index, 1)
   saveAndRender()
@@ -262,7 +264,7 @@ todoContainer.addEventListener('click', (e) => {
 todoContainer.addEventListener('click', (e) => {
   if (e.target.classList.contains('delete-todo')) {
     const todoId = e.target.parentElement.querySelector('input').id
-    deleteTodoItem(todoId)
+    deleteTodo(todoId)
   }
 })
 
@@ -296,5 +298,11 @@ newTodoInput.addEventListener('change', (e) => {
   selectedProject.todos.push(newTodo)
   saveAndRender()
 })
+
+const defaultProject = projects.find(
+  (project) => project.title === DEFAULT_PROJECT_TITLE
+)
+
+selectedProjectId = defaultProject.id
 
 render()
