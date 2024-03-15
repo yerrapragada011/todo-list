@@ -20,7 +20,7 @@ body {
   font: inherit;
 }
 #addProject {
-  width: 50%;
+  width: 300px;
 }
 .active-project {
   font-size: 35px;
@@ -50,10 +50,9 @@ body {
   display: flex;
   gap: 10px;
 }
-#priority {
-  display: flex;
-  width: 11%;
-}
 #todo-label {
   font-size: 20px;
+}
+#todo-info {
+    display: block;
 }

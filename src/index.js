@@ -25,6 +25,7 @@ function render() {
 
   if (selectedProjectId == null) {
     todoContainer.style.display = 'none'
+    newTodoContainer.style.display = 'none'
   } else {
     clearElement(todoContainer)
     renderTodos(selectedProject)
@@ -53,74 +54,45 @@ function renderTodos(selectedProject) {
     label.append(todo.title)
     todoContainer.appendChild(todoElement)
     const todoInfo = document.createElement('div')
-    label.addEventListener('click', () => {
-      if (!todoInfo) {
-        renderTodoInfo(todo, todoInfo)
-      }
-    })
-    if (!todo.description && !todo.dueDate) {
-      renderTodoInfo(todo, todoInfo)
-    } else {
-      const paragraph = document.createElement('p')
-      paragraph.textContent = `Description: ${todo.description}, Due Date: ${todo.dueDate}`
-      todoInfo.appendChild(paragraph)
-    }
+    todoInfo.setAttribute('id', `todo-info-${todo.id}`)
+    renderTodoInfo(todo, todoInfo)
+    console.log('test')
     todoContainer.appendChild(todoInfo)
   })
 }
 
 function renderTodoInfo(todo, todoInfo) {
+  if (todo.description) {
+    const paragraph = document.createElement('p')
+    paragraph.textContent = `Description: ${todo.description}, Due Date: ${todo.dueDate}`
+    todoInfo.appendChild(paragraph)
+  }
+}
+
+function editTodo(todo) {
+  const todoInfo = document.getElementById(`todo-info-${todo.id}`)
+
   clearElement(todoInfo)
 
-  const descriptionInput = document.createElement('input')
-  descriptionInput.type = 'text'
-  descriptionInput.placeholder = 'Description'
+  const newDescriptionInput = document.createElement('input')
+  newDescriptionInput.setAttribute('type', 'text')
+  newDescriptionInput.placeholder = 'Enter new description'
+  todoInfo.appendChild(newDescriptionInput)
 
-  const dueDateInput = document.createElement('input')
-  dueDateInput.type = 'date'
+  const newDueDateInput = document.createElement('input')
+  newDueDateInput.setAttribute('type', 'date')
+  newDueDateInput.placeholder = 'Enter new due date'
+  todoInfo.appendChild(newDueDateInput)
 
   const submitButton = document.createElement('button')
-  submitButton.setAttribute('type', 'button')
   submitButton.textContent = 'Submit'
-  submitButton.addEventListener('click', () => {
-    const description = descriptionInput.value
-    const dueDate = dueDateInput.value
-
-    // Update Todo object with new description and dueDate
-    todo.description = description
-    todo.dueDate = dueDate
-
-    // Hide inputs
-    descriptionInput.style.display = 'none'
-    dueDateInput.style.display = 'none'
-    submitButton.style.display = 'none'
-
-    // Display paragraph with description and due date
-    const paragraph = document.createElement('p')
-    paragraph.textContent = `Description: ${description}, Due Date: ${dueDate}`
-    todoInfo.appendChild(paragraph)
-
-    // Display edit button
-    const editButton = document.createElement('button')
-    editButton.setAttribute('type', 'button')
-    editButton.textContent = 'Edit'
-    editButton.addEventListener('click', () => {
-      descriptionInput.style.display =
-        descriptionInput.style.display === 'none' ? '' : 'none'
-      dueDateInput.style.display =
-        dueDateInput.style.display === 'none' ? '' : 'none'
-      submitButton.style.display =
-        submitButton.style.display === 'none' ? '' : 'none'
-      paragraph.style.display =
-        paragraph.style.display === 'none' ? 'block' : 'none'
-      editButton.style.display = 'none'
-    })
-    todoInfo.appendChild(editButton)
-  })
-
-  todoInfo.appendChild(descriptionInput)
-  todoInfo.appendChild(dueDateInput)
   todoInfo.appendChild(submitButton)
+
+  submitButton.addEventListener('click', () => {
+    todo.dueDate = newDueDateInput.value
+    todo.description = newDescriptionInput.value
+    saveAndRender()
+  })
 }
 
 function renderProjects() {
@@ -189,6 +161,19 @@ todoContainer.addEventListener('click', (e) => {
     )
     selectedTodo.complete = e.target.checked
     save()
+  }
+})
+
+todoContainer.addEventListener('click', (e) => {
+  if (e.target.classList.contains('edit-todo')) {
+    const todoId = e.target.parentElement.querySelector('input').id
+    const selectedProject = projects.find(
+      (project) => project.id === selectedProjectId
+    )
+    const selectedTodo = selectedProject.todos.find(
+      (todo) => todo.id === todoId
+    )
+    editTodo(selectedTodo)
   }
 })
 
