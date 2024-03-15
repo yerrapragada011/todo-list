@@ -9,9 +9,6 @@ const todoTemplate = document.getElementById('todo-template')
 const newTodoContainer = document.getElementById('todo-input')
 const newTodoInput = document.createElement('input')
 const clearCompletedTodos = document.createElement('button')
-const todoElement = document.importNode(todoTemplate.content, true)
-const label = todoElement.getElementById('todo-label')
-// const deleteTodo = todoElement.getElementById('delete-todo')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -169,6 +166,17 @@ function editTodo(todo) {
   })
 }
 
+function deleteTodoItem(todoId) {
+  const selectedProjectIndex = projects.findIndex(
+    (project) => project.id === selectedProjectId
+  )
+  const selectedProject = projects[selectedProjectIndex]
+  selectedProject.todos = selectedProject.todos.filter(
+    (todo) => todo.id !== todoId
+  )
+  saveAndRender()
+}
+
 function renderProjects() {
   projects.forEach((project, index) => {
     let projectElement = document.createElement('button')
@@ -196,17 +204,6 @@ function deleteProject(index) {
   saveAndRender()
 }
 
-// function deleteTodoItem(todoId) {
-//   const selectedProjectIndex = projects.findIndex(
-//     (project) => project.id === selectedProjectId
-//   )
-//   const selectedProject = projects[selectedProjectIndex]
-//   selectedProject.todos = selectedProject.todos.filter(
-//     (todo) => todo.id !== todoId
-//   )
-//   saveAndRender()
-// }
-
 function clearElement(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild)
@@ -222,17 +219,6 @@ function save() {
   localStorage.setItem(PROJECT_KEY, JSON.stringify(projects))
   localStorage.setItem(SELECTED_PROJECT_ID_KEY, selectedProjectId)
 }
-
-// deleteTodo.addEventListener('click', (e) => {
-//   const todoId = e.target.parentElement.querySelector('#complete-todo').id
-//   deleteTodoItem(todoId)
-// })
-
-label.addEventListener('click', () => {
-  const paragraph = document.getElementById('todo-para')
-  paragraph.style.display =
-    paragraph.style.display === 'none' ? 'block' : 'none'
-})
 
 projectContainer.addEventListener('click', (e) => {
   if (e.target.tagName.toLowerCase() === 'button') {
@@ -270,6 +256,13 @@ todoContainer.addEventListener('click', (e) => {
       (todo) => todo.id === todoId
     )
     editTodo(selectedTodo)
+  }
+})
+
+todoContainer.addEventListener('click', (e) => {
+  if (e.target.classList.contains('delete-todo')) {
+    const todoId = e.target.parentElement.querySelector('input').id
+    deleteTodoItem(todoId)
   }
 })
 
