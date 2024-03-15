@@ -9,6 +9,9 @@ const todoTemplate = document.getElementById('todo-template')
 const newTodoContainer = document.getElementById('todo-input')
 const newTodoInput = document.createElement('input')
 const clearCompletedTodos = document.createElement('button')
+const todoElement = document.importNode(todoTemplate.content, true)
+const label = todoElement.getElementById('todo-label')
+// const deleteTodo = todoElement.getElementById('delete-todo')
 
 const PROJECT_KEY = 'todo.projects'
 const SELECTED_PROJECT_ID_KEY = 'todo.selectedProjectId'
@@ -56,15 +59,73 @@ function renderTodos(selectedProject) {
     const todoInfo = document.createElement('div')
     todoInfo.setAttribute('id', `todo-info-${todo.id}`)
     renderTodoInfo(todo, todoInfo)
-    console.log('test')
     todoContainer.appendChild(todoInfo)
   })
 }
 
 function renderTodoInfo(todo, todoInfo) {
-  if (todo.description) {
-    const paragraph = document.createElement('p')
-    paragraph.textContent = `Description: ${todo.description}, Due Date: ${todo.dueDate}`
+  const paragraph = document.createElement('p')
+  paragraph.setAttribute('id', 'todo-para')
+  let textContent = ''
+  if (
+    todo.description != undefined &&
+    todo.description != '' &&
+    !todo.dueDate &&
+    !todo.priority
+  ) {
+    textContent += `Description: ${todo.description}`
+  }
+  if (
+    todo.description != undefined &&
+    todo.description != '' &&
+    (todo.dueDate || todo.priority)
+  ) {
+    textContent += `Description: ${todo.description}, `
+  }
+  if (
+    todo.dueDate != undefined &&
+    todo.dueDate != '' &&
+    !todo.description &&
+    !todo.priority
+  ) {
+    textContent += `Due Date: ${todo.dueDate}`
+  }
+  if (
+    todo.dueDate != undefined &&
+    todo.dueDate != '' &&
+    todo.description &&
+    !todo.priority
+  ) {
+    textContent += `Due Date: ${todo.dueDate}`
+  }
+  if (
+    todo.dueDate != undefined &&
+    todo.dueDate != '' &&
+    !todo.description &&
+    todo.priority
+  ) {
+    textContent += `Due Date: ${todo.dueDate}, `
+  }
+  if (
+    todo.dueDate != undefined &&
+    todo.dueDate != '' &&
+    todo.description &&
+    todo.priority
+  ) {
+    textContent += `Due Date: ${todo.dueDate}, `
+  }
+  if (
+    todo.priority !== undefined &&
+    todo.priority !== '' &&
+    ((!todo.dueDate && todo.description) ||
+      (todo.dueDate && !todo.description) ||
+      (!todo.dueDate && !todo.description) ||
+      (todo.dueDate && todo.description))
+  ) {
+    textContent += `Priority: ${todo.priority}`
+  }
+  if (textContent !== '') {
+    paragraph.textContent = textContent
     todoInfo.appendChild(paragraph)
   }
 }
@@ -77,12 +138,24 @@ function editTodo(todo) {
   const newDescriptionInput = document.createElement('input')
   newDescriptionInput.setAttribute('type', 'text')
   newDescriptionInput.placeholder = 'Enter new description'
+  newDescriptionInput.value = todo.description ? todo.description : ''
   todoInfo.appendChild(newDescriptionInput)
 
   const newDueDateInput = document.createElement('input')
   newDueDateInput.setAttribute('type', 'date')
   newDueDateInput.placeholder = 'Enter new due date'
+  newDueDateInput.value = todo.dueDate
   todoInfo.appendChild(newDueDateInput)
+
+  const prioritySelect = document.createElement('select')
+  prioritySelect.innerHTML = `
+    <option value="" disabled selected>Select Priority</option>
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high">High</option>
+  `
+  prioritySelect.value = todo.priority
+  todoInfo.appendChild(prioritySelect)
 
   const submitButton = document.createElement('button')
   submitButton.textContent = 'Submit'
@@ -91,6 +164,7 @@ function editTodo(todo) {
   submitButton.addEventListener('click', () => {
     todo.dueDate = newDueDateInput.value
     todo.description = newDescriptionInput.value
+    todo.priority = prioritySelect.value
     saveAndRender()
   })
 }
@@ -122,6 +196,17 @@ function deleteProject(index) {
   saveAndRender()
 }
 
+// function deleteTodoItem(todoId) {
+//   const selectedProjectIndex = projects.findIndex(
+//     (project) => project.id === selectedProjectId
+//   )
+//   const selectedProject = projects[selectedProjectIndex]
+//   selectedProject.todos = selectedProject.todos.filter(
+//     (todo) => todo.id !== todoId
+//   )
+//   saveAndRender()
+// }
+
 function clearElement(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild)
@@ -137,6 +222,17 @@ function save() {
   localStorage.setItem(PROJECT_KEY, JSON.stringify(projects))
   localStorage.setItem(SELECTED_PROJECT_ID_KEY, selectedProjectId)
 }
+
+// deleteTodo.addEventListener('click', (e) => {
+//   const todoId = e.target.parentElement.querySelector('#complete-todo').id
+//   deleteTodoItem(todoId)
+// })
+
+label.addEventListener('click', () => {
+  const paragraph = document.getElementById('todo-para')
+  paragraph.style.display =
+    paragraph.style.display === 'none' ? 'block' : 'none'
+})
 
 projectContainer.addEventListener('click', (e) => {
   if (e.target.tagName.toLowerCase() === 'button') {
