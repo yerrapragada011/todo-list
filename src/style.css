@@ -6,6 +6,7 @@ body {
 #projects {
   display: flex;
   flex-direction: column;
+  padding-top: 20px;
   gap: 10px;
 }
 .list {

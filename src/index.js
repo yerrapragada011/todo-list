@@ -149,7 +149,7 @@ function editTodo(todo) {
 
   const prioritySelect = document.createElement('select')
   prioritySelect.innerHTML = `
-    <option value="" disabled selected>Select Priority</option>
+    <option value="" selected> - </option>
     <option value="low">Low</option>
     <option value="medium">Medium</option>
     <option value="high">High</option>
