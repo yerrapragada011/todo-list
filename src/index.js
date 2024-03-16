@@ -54,6 +54,7 @@ function renderTodos(selectedProject) {
     const label = todoElement.getElementById('todo-label')
     checkbox.id = todo.id
     checkbox.checked = todo.complete
+    label.htmlFor = todo.id
     label.append(todo.title)
     todoContainer.appendChild(todoElement)
     const todoInfo = document.createElement('div')
@@ -67,6 +68,23 @@ function renderTodoInfo(todo, todoInfo) {
   const paragraph = document.createElement('p')
   paragraph.setAttribute('id', 'todo-para')
   let textContent = ''
+
+  let priorityColor = ''
+  switch (todo.priority) {
+    case 'low':
+      priorityColor = 'blue'
+      break
+    case 'medium':
+      priorityColor = 'orange'
+      break
+    case 'high':
+      priorityColor = 'red'
+      break
+    default:
+      priorityColor = ''
+      break
+  }
+
   if (
     todo.description != undefined &&
     todo.description != '' &&
@@ -122,10 +140,14 @@ function renderTodoInfo(todo, todoInfo) {
       (!todo.dueDate && !todo.description) ||
       (todo.dueDate && todo.description))
   ) {
-    textContent += `Priority: ${todo.priority}`
+    const prioritySpan = document.createElement('span')
+    prioritySpan.textContent = todo.priority
+    prioritySpan.style.color = priorityColor
+    textContent += `Priority: `
+    paragraph.textContent = textContent
+    paragraph.appendChild(prioritySpan)
   }
   if (textContent !== '') {
-    paragraph.textContent = textContent
     todoInfo.appendChild(paragraph)
   }
 }
