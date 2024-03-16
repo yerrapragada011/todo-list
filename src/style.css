@@ -54,3 +54,8 @@ body {
 #todo-label {
   font-size: 20px;
 }
+#bullet-span {
+  display: inline;
+  /* align-items: center; */
+  margin-right: 5px;
+}

@@ -55,6 +55,11 @@ function renderTodos(selectedProject) {
     checkbox.id = todo.id
     checkbox.checked = todo.complete
     label.htmlFor = todo.id
+    const bulletSpan = document.createElement('span')
+    bulletSpan.setAttribute('id', 'bullet-span')
+    bulletSpan.textContent = '\u2022 '
+    bulletSpan.style.color = getPriorityColor(todo.priority)
+    label.prepend(bulletSpan)
     label.append(todo.title)
     todoContainer.appendChild(todoElement)
     const todoInfo = document.createElement('div')
@@ -64,14 +69,9 @@ function renderTodos(selectedProject) {
   })
 }
 
-function renderTodoInfo(todo, todoInfo) {
-  const paragraph = document.createElement('p')
-  paragraph.setAttribute('id', 'todo-para')
-  const prioritySpan = document.createElement('span')
-  let textContent = ''
-
+function getPriorityColor(priority) {
   let priorityColor = ''
-  switch (todo.priority) {
+  switch (priority) {
     case 'low':
       priorityColor = 'blue'
       break
@@ -85,6 +85,14 @@ function renderTodoInfo(todo, todoInfo) {
       priorityColor = ''
       break
   }
+  return priorityColor
+}
+
+function renderTodoInfo(todo, todoInfo) {
+  const paragraph = document.createElement('p')
+  paragraph.setAttribute('id', 'todo-para')
+  const prioritySpan = document.createElement('span')
+  let textContent = ''
 
   if (todo.description) {
     textContent += `Description: ${todo.description}`
@@ -97,17 +105,7 @@ function renderTodoInfo(todo, todoInfo) {
     textContent += `Due Date: ${todo.dueDate}`
   }
 
-  if (todo.priority) {
-    if (textContent !== '') {
-      textContent += ', '
-    }
-    textContent += `Priority: `
-  }
-  prioritySpan.textContent = todo.priority
-  prioritySpan.style.color = priorityColor
   paragraph.textContent = textContent
-  paragraph.appendChild(prioritySpan)
-
   if (textContent !== '') {
     todoInfo.appendChild(paragraph)
   }
