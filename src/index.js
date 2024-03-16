@@ -67,6 +67,7 @@ function renderTodos(selectedProject) {
 function renderTodoInfo(todo, todoInfo) {
   const paragraph = document.createElement('p')
   paragraph.setAttribute('id', 'todo-para')
+  const prioritySpan = document.createElement('span')
   let textContent = ''
 
   let priorityColor = ''
@@ -85,68 +86,28 @@ function renderTodoInfo(todo, todoInfo) {
       break
   }
 
-  if (
-    todo.description != undefined &&
-    todo.description != '' &&
-    !todo.dueDate &&
-    !todo.priority
-  ) {
+  if (todo.description) {
     textContent += `Description: ${todo.description}`
   }
-  if (
-    todo.description != undefined &&
-    todo.description != '' &&
-    (todo.dueDate || todo.priority)
-  ) {
-    textContent += `Description: ${todo.description}, `
-  }
-  if (
-    todo.dueDate != undefined &&
-    todo.dueDate != '' &&
-    !todo.description &&
-    !todo.priority
-  ) {
+
+  if (todo.dueDate) {
+    if (textContent !== '') {
+      textContent += ', '
+    }
     textContent += `Due Date: ${todo.dueDate}`
   }
-  if (
-    todo.dueDate != undefined &&
-    todo.dueDate != '' &&
-    todo.description &&
-    !todo.priority
-  ) {
-    textContent += `Due Date: ${todo.dueDate}`
-  }
-  if (
-    todo.dueDate != undefined &&
-    todo.dueDate != '' &&
-    !todo.description &&
-    todo.priority
-  ) {
-    textContent += `Due Date: ${todo.dueDate}, `
-  }
-  if (
-    todo.dueDate != undefined &&
-    todo.dueDate != '' &&
-    todo.description &&
-    todo.priority
-  ) {
-    textContent += `Due Date: ${todo.dueDate}, `
-  }
-  if (
-    todo.priority !== undefined &&
-    todo.priority !== '' &&
-    ((!todo.dueDate && todo.description) ||
-      (todo.dueDate && !todo.description) ||
-      (!todo.dueDate && !todo.description) ||
-      (todo.dueDate && todo.description))
-  ) {
-    const prioritySpan = document.createElement('span')
-    prioritySpan.textContent = todo.priority
-    prioritySpan.style.color = priorityColor
+
+  if (todo.priority) {
+    if (textContent !== '') {
+      textContent += ', '
+    }
     textContent += `Priority: `
-    paragraph.textContent = textContent
-    paragraph.appendChild(prioritySpan)
   }
+  prioritySpan.textContent = todo.priority
+  prioritySpan.style.color = priorityColor
+  paragraph.textContent = textContent
+  paragraph.appendChild(prioritySpan)
+
   if (textContent !== '') {
     todoInfo.appendChild(paragraph)
   }
