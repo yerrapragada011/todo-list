@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Project from './Project.js'
 import Todo from './Todo.js'
 
@@ -102,7 +103,8 @@ function renderTodoInfo(todo, todoInfo) {
     if (textContent !== '') {
       textContent += ', '
     }
-    textContent += `Due Date: ${todo.dueDate}`
+    const formattedDueDate = moment(todo.dueDate).format('MM-DD-yyyy')
+    textContent += `Due Date: ${formattedDueDate}`
   }
 
   paragraph.textContent = textContent
